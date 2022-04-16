@@ -1,6 +1,6 @@
 # Rereddit (working title)
 
-This purpose of this project is to build the backend for a hypothetical forum. Work in progress and subject to change.
+The purpose of this project is to build the backend for a hypothetical forum. Work in progress and subject to change.
 
 During development, I opted to build this database via an ORM approach in order to get more comfortable with flask and to simplify entries which involve multiple tables. Future changes will include full implementation of comments to allow for each comment to have a parent and multiple children and the development of additional API endpoints, including those which would facilitate the creation, editing, and deletion of comments.
 
