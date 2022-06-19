@@ -18,6 +18,8 @@ class User(db.Model):
     email = db.Column(db.String(128), unique=True)
     # backref to see a user's posts
     posts = db.relationship('Post', backref='user_posts', cascade="all,delete")
+    comments = db.relationship(
+        'Comment', backref='user_comments', cascade="all,delete")
 
     def __init__(self, username: str, password: str):
         self.username = username
@@ -44,7 +46,7 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     comments = db.relationship(
         'Comment', backref='post_comments', cascade="all,delete")
-    #categories = db.relationship('Comment', backref='post_categories')
+    # categories = db.relationship('Comment', backref='post_categories')
 
     def __init__(self, title: str, content: str, user_id: int):
         self.title = title
@@ -103,6 +105,7 @@ class Category(db.Model):
 class Comment(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     timestamp = db.Column(
         db.DateTime,
         default=datetime.datetime.utcnow,
@@ -111,14 +114,15 @@ class Comment(db.Model):
     content = db.Column(db.String(), nullable=False)
     parent_id = db.Column(db.Integer, db.ForeignKey('comments.id'))
     post_id = db.Column(db.Integer, db.ForeignKey('posts.id'))
+
     parent_post = db.relationship('Post', lazy='subquery',
                                   backref=db.backref('replies', lazy=True))
     # backref for children
     children = db.relationship(
         'Comment', backref='comment_children', remote_side='Comment.id')
 
-    def __init__(self, timestamp, content, post_id):
-        self.timestamp = timestamp,
+    def __init__(self, user_id, content, post_id):
+        self.user_id = user_id,
         self.content = content,
         self.post_id = post_id
 
@@ -126,5 +130,8 @@ class Comment(db.Model):
         return{
             'id': self.id,
             'timestamp': self.timestamp,
+            'user_id': self.user_id,
+            'post_id': self.post_id,
+            'parent_id': self.parent_id,
             'content': self.content
         }
