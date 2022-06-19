@@ -1,3 +1,4 @@
+from re import L
 from flask import Blueprint, jsonify, abort, request
 from ..models import Post, Comment, db
 import hashlib
@@ -83,6 +84,24 @@ def delete(id: int):
     p = Post.query.get_or_404(id)
     try:
         db.session.delete(p)
+        db.session.commit()
+        return jsonify(True)
+    except:
+        return jsonify(False)
+
+# create reply
+
+
+@bp.route('/<int:id>/reply', methods=['POST'])
+def reply(id: int):
+    if 'content' not in request.json or 'user_id' not in request.json:
+        return abort(400)
+    p = Post.query.get_or_404(id)
+    c = Comment(content=request.json['content'],
+                post_id=id, user_id=request.json['user_id'])
+
+    try:
+        db.session.add(c)
         db.session.commit()
         return jsonify(True)
     except:
