@@ -1,6 +1,6 @@
 # Rereddit
 
-This project represent the backend for a hypothetical forum and was constructed via an ORM approach. Work in progress and subject to change.
+This project represents the backend component of a fictional forum. 
 
 Current available API functionality is as follows:
 
